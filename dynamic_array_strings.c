@@ -15,7 +15,7 @@ int main()
 	int total = 0;
 
 	// ask user for the number of strings
-	printf("Enter Number Of Stjrings: ");
+	printf("Enter Number Of Strings: ");
 	scanf("%d", &total);
 
 	strings = malloc(total * sizeof(char *)); //allocating space for strings to point to a number (total) of pointers-to-characters (char *)
