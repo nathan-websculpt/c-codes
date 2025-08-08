@@ -21,7 +21,7 @@
 #define BUFFER_SIZE 4096
 #define	ARRAY_SIZE 100
 
-int addresses[ARRAY_SIZE];
+void *addresses[ARRAY_SIZE];
 int addr_size = 0;
 
 
