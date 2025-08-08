@@ -168,10 +168,10 @@ void init() {
 void freeMemory() {
 	printf("FREEING MEMORY\n");
 	for(int i = 0; i < addr_size; i++) {
-		free(addresses[i]); // TODO:
+		free(addresses[i]);
 		printf("Freed memory at address: %p\n", (void *)addresses[i]);
 
-		// TODO: clear the address in the array
+		addresses[i] = NULL; 
 	}
 	addr_size = 0; // reset the size of addresses array
 }
