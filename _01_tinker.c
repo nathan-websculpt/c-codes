@@ -15,13 +15,15 @@
 //          c i 10   --    calloc(10, sizeof(int))
 //          g i 0    --    get what is at the address of index 0 ( results from m i 5 )
 //          g c 1    --    get what is at the address of index 1 ( results from m c 8 )
+//          f        --    free allocated memory
 //          t        --    display tree
 
 #define BUFFER_SIZE 4096
 #define	ARRAY_SIZE 100
 
-int addresses[ARRAY_SIZE];
+void *addresses[ARRAY_SIZE];
 int addr_size = 0;
+
 
 void handleMalloc(char *subStrArray[]) {
 	printf("handleMalloc called\n");
@@ -29,35 +31,33 @@ void handleMalloc(char *subStrArray[]) {
 	//look for second item in command - i for int and c for char
 	switch (subStrArray[1][0])
 	{
-	case 'i':
-		printf("for type Int\n");
-		int size = atoi(subStrArray[2]);
-		int *int_ptr = malloc(sizeof(int) * size);
-		printf("ptr: %p\n", int_ptr);
-		printf("more info: %p\n", &int_ptr);
+		case 'i':
+			printf("for type Int\n");
+			int size = atoi(subStrArray[2]);
+			int *int_ptr = malloc(sizeof(int) * size);
+			printf("ptr: %p\n", int_ptr);
+			printf("more info: %p\n", &int_ptr);
 
-		//load mock data
-		for (int i = 0; i < size; i++) int_ptr[i] = size - i;
-		//display mock data
-		for (int i = 0; i < size; i++)
-			printf("[%d] = %d\n", i, int_ptr[i]);
+			//load mock data
+			for (int i = 0; i < size; i++) int_ptr[i] = size - i;
+			//display mock data
+			for (int i = 0; i < size; i++)
+				printf("[%d] = %d\n", i, int_ptr[i]);
 
-		//store address on addresses array
-		addresses[addr_size] = int_ptr;
-		addr_size++;
-		break;
-	case 'c':
-		printf("for type Char\n");
-		char *char_ptr = malloc(sizeof(char) * atoi(subStrArray[2]));
-		printf("ptr: %p\n", char_ptr);
-		printf("more info: %p\n", &char_ptr);
+			//store address on addresses array
+			addresses[addr_size++] = int_ptr;
+			break;
+		case 'c':
+			printf("for type Char\n");
+			char *char_ptr = malloc(sizeof(char) * atoi(subStrArray[2]));
+			printf("ptr: %p\n", char_ptr);
+			printf("more info: %p\n", &char_ptr);
 
-		addresses[addr_size] = char_ptr;
-		addr_size++;
-		break;
-	default:
-		printf("Did not find 'i' or 'c' at index 1\n");
-		break;
+			addresses[addr_size++] = char_ptr;
+			break;
+		default:
+			printf("Did not find 'i' or 'c' at index 1\n");
+			break;
 	};
 
 	//TODO: free
@@ -69,27 +69,25 @@ void handleCalloc(char *subStrArray[]) {
 	//look for second item in command - i for int and c for char
 	switch (subStrArray[1][0])
 	{
-	case 'i':
-		printf("for type Int\n");
-		int *int_ptr = calloc(atoi(subStrArray[2]), sizeof(int));
-		printf("ptr: %p\n", int_ptr);
-		printf("more info: %p\n", &int_ptr);
+		case 'i':
+			printf("for type Int\n");
+			int *int_ptr = calloc(atoi(subStrArray[2]), sizeof(int));
+			printf("ptr: %p\n", int_ptr);
+			printf("more info: %p\n", &int_ptr);
 
-		addresses[addr_size] = int_ptr;
-		addr_size++;
-		break;
-	case 'c':
-		printf("for type Char\n");
-		char *char_ptr = calloc(atoi(subStrArray[2]), sizeof(char));
-		printf("ptr: %p\n", char_ptr);
-		printf("more info: %p\n", &char_ptr);
+			addresses[addr_size++] = int_ptr;
+			break;
+		case 'c':
+			printf("for type Char\n");
+			char *char_ptr = calloc(atoi(subStrArray[2]), sizeof(char));
+			printf("ptr: %p\n", char_ptr);
+			printf("more info: %p\n", &char_ptr);
 
-		addresses[addr_size] = char_ptr;
-		addr_size++;
-		break;
-	default:
-		printf("Did not find 'i' or 'c' at index 1\n");
-		break;
+			addresses[addr_size++] = char_ptr;
+			break;
+		default:
+			printf("Did not find 'i' or 'c' at index 1\n");
+			break;
 	};
 
 	//TODO: free
@@ -119,7 +117,7 @@ void makeChristmasTree() {
 void handleGet(char *subStrArray[]) {
 	int index = atoi(subStrArray[2]);
 	printf("GETTING SOME DATA\n");
-	int known_address = addresses[index];
+	int known_address = (int)addresses[index];
 
 	//switch on pointer type
 	switch (subStrArray[1][0])
@@ -167,7 +165,18 @@ void init() {
 	printf("__________________________________________________________________________________________>\n\n\n");
 }
 
-int main(void) {
+void freeMemory() {
+	printf("FREEING MEMORY\n");
+	for(int i = 0; i < addr_size; i++) {
+		free(addresses[i]);
+		printf("Freed memory at address: %p\n", (void *)addresses[i]);
+
+		addresses[i] = NULL; 
+	}
+	addr_size = 0; // reset the size of addresses array
+}
+
+int main() {
 	init();
 	char buffer[BUFFER_SIZE];
 	int length = 0;
@@ -207,6 +216,9 @@ int main(void) {
 				break;
 			case 'q':
 				breaker = 0;
+				break;
+			case 'f':
+				freeMemory();
 				break;
 			default:
 				printf("Did not find 'm' or 'c' at index 0\n");

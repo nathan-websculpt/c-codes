@@ -117,7 +117,7 @@ void makeChristmasTree() {
 void handleGet(char *subStrArray[]) {
 	int index = atoi(subStrArray[2]);
 	printf("GETTING SOME DATA\n");
-	int known_address = addresses[index];
+	int known_address = (int)addresses[index];
 
 	//switch on pointer type
 	switch (subStrArray[1][0])
